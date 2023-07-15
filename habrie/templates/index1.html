@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Student</title>
+</head>
+<body>
+  <h1>Create Student</h1>
+  <form method="POST" action="{{ file_path }}" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <h2>Student Information</h2>
+    <table>
+      {% for field in student_form %}
+      <tr>
+        <!-- <th>{{ field.label_tag }}</th> -->
+        <td>
+          {% if field.field.widget.input_type == 'checkbox' %}
+            {{ field }} {{ field.label }}
+          {% else %}
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Parent Information</h2>
+    <table>
+      {% for field in parent_form %}
+      <tr>
+        <!-- <th>{{ field.label_tag }}</th> -->
+        <td>
+          {% if field.field.widget.input_type == 'checkbox' %}
+            {{ field }} {{ field.label }}
+          {% else %}
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Academic Details</h2>
+    <table>
+      {% for field in academic_form %}
+      <tr>
+        <!-- <th>{{ field.label_tag }}</th> -->
+        <td>
+          {% if field.field.widget.input_type == 'checkbox' %}
+            {{ field }} {{ field.label }}
+          {% else %}
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    
+
+    <h2>Bulk Import</h2>
+    <table>
+      <tr>
+        {% csrf_token %}
+        {{ upload_form }}
+      </tr>
+    </table>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

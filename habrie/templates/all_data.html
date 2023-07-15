@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student List</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Student List</h1>
+
+  <form method="GET" action="">
+    <label for="class_filter">Class:</label>
+    <select id="class_filter" name="class_filter">
+      <option value="">All</option>
+      {% for class_id in classes %}
+      <option value="{{ class_id }}" {% if class_filter == class_id %}selected{% endif %}>{{ class_id }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="section_filter">Section:</label>
+    <select id="section_filter" name="section_filter">
+      <option value="">All</option>
+      {% for section_id in sections %}
+      <option value="{{ section_id }}" {% if section_filter == section_id %}selected{% endif %}>{{ section_id }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="admission_cat_filter">Admission Category:</label>
+    <select id="admission_cat_filter" name="admission_cat_filter">
+      <option value="">All</option>
+      {% for admission_cat in admission_categories %}
+      <option value="{{ admission_cat }}" {% if admission_cat_filter == admission_cat %}selected{% endif %}>{{ admission_cat }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+    <a href="{% url 'export_pdf' %}?class_filter={{ request.GET.class_filter }}&section_filter={{ request.GET.section_filter }}&admission_cat_filter={{ request.GET.admission_cat_filter }}" target="_blank">Export to PDF</a>
+    <a href="{% url 'export_excel' %}?class_filter={{ request.GET.class_filter }}&section_filter={{ request.GET.section_filter }}&admission_cat_filter={{ request.GET.admission_cat_filter }}" target="_blank">Export to Excel</a>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Aadhar</th>
+        <th>Date of Birth</th>
+        <th>Admission Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td>{{ student.name }}</td>
+        <td>{{ student.gender }}</td>
+        <td>{{ student.aadhar }}</td>
+        <td>{{ student.dob }}</td>
+        <td>{{ student.addmission_cat }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <script>
+    // Retrieve the current filter values from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const classFilterValue = urlParams.get('class_filter');
+    const sectionFilterValue = urlParams.get('section_filter');
+    const admissionCatFilterValue = urlParams.get('admission_cat_filter');
+    
+    // Set the filter values in the form fields
+    document.getElementById('class_filter').value = classFilterValue || '';
+    document.getElementById('section_filter').value = sectionFilterValue || '';
+    document.getElementById('admission_cat_filter').value = admissionCatFilterValue || '';
+  </script>
+</body>
+</html>
