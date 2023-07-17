@@ -64,6 +64,18 @@ def create_student(request):
         parent_form = ParentForm(request.POST)
         academic_form = AcademicDetailForm(request.POST)
 
+        if not student_form.is_valid():
+            return HttpResponse("Student data not verified or already exists")
+        
+        if not parent_form.is_valid():
+            return HttpResponse("Parent data not verified or already exists")
+        
+        if not academic_form.is_valid():
+            return HttpResponse("Acedemic data not verified or already exists")
+        
+        
+        
+
         if student_form.is_valid() and parent_form.is_valid() and academic_form.is_valid():
             student = student_form.save(commit=False)
             student_name = student.name
@@ -97,19 +109,22 @@ def create_student(request):
 
                 send_templated_email.delay(recipient_email,recipient_name, enroll_no, class_id, section, session)
 
+            if not upload_form.is_valid():
+                return HttpResponse("Bulk data not verified")
 
-                
-        if upload_form.is_valid():
-            upload_form.save()
-            upload_form = CsvModelForm()
-            csv_upload.delay()
+            if upload_form.is_valid():
+                upload_form.save()
+                upload_form = CsvModelForm()
+                csv_upload.delay()
 
-            return HttpResponse("Single and bulk upload successfull")
+                return HttpResponse("Bulk and Single upload successfull")
+            
+            return HttpResponse("Single upload successfull")
         
         empty_objects = AcademicDetail.objects.filter(enroll_id='')
         empty_objects.delete()
 
-        return HttpResponse("Single and bulk Upload Successful.")
+        return HttpResponse("Please provide correct field values")
 
     else:
         student_form = StudentForm()
@@ -236,12 +251,15 @@ def export_to_excel(request):
 from django.shortcuts import render, redirect
 from .forms import DocumentForm
 
+@csrf_exempt
 def upload_document(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('document_list')  
+            return redirect('document_list')
+        else:
+            return HttpResponse("Give correct fields")
     else:
         form = DocumentForm()
     
